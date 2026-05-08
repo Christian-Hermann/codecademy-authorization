@@ -15,9 +15,27 @@ app.set("view engine", "ejs");
 require("./config/passport");
 
 // Session Config
-
+app.use(
+  session({
+    secret: "random-secret-string",
+    cookie: { maxAge: 3000000, sameSite: "none", secure: true },
+    saveUninitialized: false,
+    resave: false,
+  })
+);
 // Passport Config
-
+passport.use(
+  new LocalStrategy((username, password, done) => {
+    helper.findByUsername(username, (err, user) => {
+      if (err) {
+        return done(err);
+      }
+      if (!user) {
+        return done(null, false);
+      }
+    });
+  })
+);
 // Routes
 app.use(require("./routes/index.routes"));
 
