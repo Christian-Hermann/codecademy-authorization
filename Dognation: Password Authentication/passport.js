@@ -18,6 +18,13 @@ passport.serializeUser((user, done) => {
 // Deserialize a user
 passport.deserializeUser((id, done) => {
   helper.findById(id, async (err, user) => {
+    const matchedPassword = await bcrypt.compare(password, user.password);
+
+if (!matchedPassword) {
+  return done(null, false);
+}
+
+return done(null, user);
     if (err) {
       return done(err);
     }
