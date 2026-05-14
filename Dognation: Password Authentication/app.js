@@ -44,7 +44,7 @@ passport.use(
 app.use(require("./routes/index.routes"));
 
 app.get("/", (req, res) => {
-  const user = null || "Guest";
+  const user = req.user || "Guest";
   res.render("home", { user });
 });
 

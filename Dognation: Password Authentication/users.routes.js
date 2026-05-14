@@ -18,7 +18,7 @@ router.post("/register", async (req, res) => {
     }
     // Hash password before storing in local DB:
     const salt = await bcrypt.genSalt(10);
-    const newUser = { ...id, username, password: password };
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     // Store new user in local DB
     await users.push(newUser);
@@ -31,13 +31,19 @@ router.post("/register", async (req, res) => {
 });
 
 // Log In User:
-router.post("/login", (req, res) => {
-  res.redirect("../");
-});
+router.post(
+  "/login",
+  passport.authenticate("local", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("../");
+  }
+);
 
 // Log out user:
 router.get("/logout", (req, res) => {
-  res.redirect("../");
+  req.logout(() => {
+    res.redirect("../");
+  });
 });
 
 router.get("/register", (req, res) => {
